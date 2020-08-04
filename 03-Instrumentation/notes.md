@@ -13,17 +13,17 @@ Counter - наиболее часто встречающаяся метрика.
 
 Официальные библиотеки Prometheus потоко-безопасны и автоматически регистрируют метрики в своем [реестре](3-1-example.py).
 
-
+~~~ python
     REQUESTS = Counter('hello_worlds_total',
             'Hello Worlds requested.')
 
     class MyHandler(http.server.BaseHTTPRequestHandler):
         def do_GET(self):
             REQUESTS.inc()
-
+~~~ 
 ### Ошибки Counting
 Инструментация Prometheus позволяет автоматически [подсчитывать исключения ](3-4-example.py)
-
+~~~ python
     EXCEPTIONS = Counter('hello_world_exceptions_total',
             'Exceptions serving Hello World.')
 
@@ -33,23 +33,23 @@ Counter - наиболее часто встречающаяся метрика.
             with EXCEPTIONS.count_exceptions():
             if random.random() < 0.2:
                 raise Exception
-
+~~~ 
 Можно также использовать функции декораторы 
-
+~~~ python
     EXCEPTIONS = Counter('hello_world_exceptions_total',
     'Exceptions serving Hello World.')
 
     @EXCEPTIONS.count_exceptions()
-
+~~~ 
 
 ### Counting Size
 Prometheus  в качестве счетчиков использует 64 битные беззнаковые  числа двойной точности, поэтому можно использовать их [для многих целей](3-5-example.py)
-
+~~~ python
     SALES = Counter('hello_world_sales_euro_total', 'Euros made serving Hello World.')
 
     euros = random.random()
     SALES.inc(euros)
-
+~~~ 
 Счетчики могут только увеличиваться, и никогда не уменьшатся.
 При рестарет приложения они всегда сбрасываются в 0 и их не надо сохранять при рестарте.
 
