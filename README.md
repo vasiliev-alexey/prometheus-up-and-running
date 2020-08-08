@@ -6,3 +6,4 @@
 ### 3. [Библиотеки и инструменты](03-Instrumentation/notes.md)
 ### 4. [Предоставление метрик](04-Exposition/notes.md)
 ### 5. [Метки](05-Labels/notes.md)
+### 5. [Метки](06-Grafana/README.md)
