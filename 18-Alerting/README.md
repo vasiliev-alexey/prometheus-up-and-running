@@ -86,3 +86,80 @@ groups:
 Важно чтобы метки не мутировали  между срезами, иначе это будет большой спам.
 
 Prometheus не позволяет определять несколько порогов срабатывания, но это можно обойти путем создания правил с разными уровнями серьезности.
+
+## Аннотации и шаблоны
+Метки предупреждений идентифицируют предупреждение, поэтому их не возможно использовать для предоставление дополнительной информации - такой как количество, текущее значение итп. Вместо этого необходимо использовать аннотации к меткам, которые могут быть задействованы в уведомлениях. 
+* Аннотации не являются частью предупреждения, поэтому их нельзя использовать  для группировки или маршрутизации.
+* Аннотации предоставляют дополнительную информацию о произошедшем событии. 
+* Аннотации формируются на основании шаблонов языка go
+
+~~~ yaml
+groups:
+ - name: node_rules
+    rules:
+      - alert: ManyInstancesDown
+        for: 5m
+        expr: avg without(instance)(up{job="node"}) * 100 < 50
+        labels:
+          severity: page
+        annotations:
+          summary: 'Only {{printf "%.2f" $value}}% of instances are up.'
+~~~
+где  $value - это значение предупреждения
+
+~~~ yaml
+- name: example
+  rules:
+   - alert: InstanceDown
+     expr: up == 0
+     for: 1m
+     labels:
+       severity: ticket   
+# добавляем аннотацию 
+     annotations:
+       summary: 'Instance {{$labels.instance}} of {{$labels.job}} is down.'
+       dashboard: http://some.grafana:3000/dashboard/db/prometheus 
+~~~
+
+## Конфигурация Alertmanager (Configuring Alertmanagers)
+
+Добавляем в композ новый сервис 
+
+~~~ yaml
+  alertmanager:
+    image: prom/alertmanager:v0.21.0
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+#   deploy:
+#      mode: global
+    networks:
+      - monitoring 
+~~~  
+
+Добавляем в конфигурацию Prometheus
+~~~ yaml
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+# переопределяем лейблы - в данном случае дропаем событие - без нотификации
+  alert_relabel_configs:
+  - source_labels: [severity]
+    regex: info
+    action: drop
+~~~
+
+### Внешние метки (External Labels)
+Внешняя метка это ключ идентичности для Prometheus. Он позволяет идентифицировать Prometheus в кластере или федерации.
+
+ prometheus.yml
+ ~~~ yaml
+
+ ~~~
