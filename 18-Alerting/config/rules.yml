@@ -1,0 +1,17 @@
+groups:
+- name: node_rules
+  rules:
+    - record: job:up:avg
+      expr: avg without(instance)(up{job="node"})
+    - alert: ManyInstancesDown
+      expr: avg without(instance)(up{job="node"}) < 0.5
+      for: 2m
+      labels:
+        severity: page
+- name: example
+  rules:
+   - alert: InstanceDown
+     expr: up == 0
+     for: 1m
+     labels:
+       severity: ticket     
