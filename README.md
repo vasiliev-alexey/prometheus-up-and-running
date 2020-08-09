@@ -9,4 +9,4 @@
 ### 6. [Grafana](06-Grafana/README.md)
 
 
-### 18. [Grafana](18-Alerting/README.md)
+### 18. [Предупреждения (Alerting)](18-Alerting/README.md)
