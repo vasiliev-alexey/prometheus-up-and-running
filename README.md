@@ -10,3 +10,4 @@
 
 
 ### 18. [Предупреждения (Alerting)](18-Alerting/README.md)
+### 19. [Менеджер оповещений (Alertmanager)](19-Alertmanager/README.md)
