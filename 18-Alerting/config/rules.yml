@@ -1,0 +1,36 @@
+groups:
+- name: node_rules
+  rules:
+    - record: job:up:avg
+      expr: avg without(instance)(up{job="node"})
+    - alert: ManyInstancesDown
+      expr: avg without(instance)(up{job="node"}) < 0.5
+      for: 2m
+      labels:
+        severity: page
+      annotations:
+        summary: 'More than half of instances are down.'
+        description: >
+              Down instances: {{ range query "up{job=\"node\"} == 0" }}  
+                    {{ .Labels.instance }}
+                          {{ end }}
+
+
+- name: example
+  rules:
+   - alert: InstanceDown
+     expr: up == 0
+     for: 1m
+     labels:
+       severity: ticket    
+     annotations:
+       summary: 'Instance {{$labels.instance}} of {{$labels.job}} is down.'
+       dashboard: http://some.grafana:3000/dashboard/db/prometheus 
+   - alert: InstanceDownInfo
+     expr: up == 0
+     for: 1m
+     labels:
+       severity: info    
+     annotations:
+       summary: 'Instance {{$labels.instance}} of {{$labels.job}} is down.'
+       information: test

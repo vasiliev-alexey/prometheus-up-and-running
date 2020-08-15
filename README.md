@@ -8,3 +8,10 @@
 ### 5. [Метки](05-Labels/notes.md)
 ### 6. [Построение графиков с помощью Grafana](06-Grafana/README.md)
 
+
+
+
+
+### 18. [Предупреждения (Alerting)](18-Alerting/README.md)
+
+
