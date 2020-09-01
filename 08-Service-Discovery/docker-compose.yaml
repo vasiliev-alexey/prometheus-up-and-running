@@ -1,0 +1,72 @@
+version: "3.1"
+services:
+  prometheus:
+    image: prom/prometheus:v2.20.1
+    depends_on: ["consul-server-1"]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/prometheus
+      - ./config/filesd.json:/etc/prometheus/filesd.json
+      - ./config/filesd.json:/prometheus/filesd.json
+
+    networks:
+      monitoring:
+        aliases:
+          - prometheus
+
+  nodeexporter:
+    image: prom/node-exporter:latest
+    container_name: nodeexporter
+    user: root
+    privileged: true
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)"
+    restart: unless-stopped
+    expose:
+      - 9100
+    networks:
+      - monitoring
+
+
+  consul-agent-1: &consul-agent
+    image: consul:latest
+    networks:
+      - monitoring
+    command: "agent -retry-join consul-server-bootstrap -client 0.0.0.0"
+
+  consul-agent-2:
+    <<: *consul-agent
+
+  consul-agent-3:
+    <<: *consul-agent
+
+  consul-server-1: &consul-server
+    <<: *consul-agent
+    command: "agent -server -retry-join consul-server-bootstrap -client 0.0.0.0"
+
+  consul-server-2:
+    <<: *consul-server
+
+  consul-server-bootstrap:
+    <<: *consul-agent
+    ports:
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
+    command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0"
+    
+networks:
+  monitoring:
+
+volumes:
+  consul-data:
+    driver: local
