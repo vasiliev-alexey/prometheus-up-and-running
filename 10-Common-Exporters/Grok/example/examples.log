@@ -1,0 +1,7 @@
+GET /foo 1.23
+GET /bar 3.2
+POST /foo 4.6
+POST /foo 4.6
+POST /foo 4.6
+POST /foo 5.6
+POST /foo 4.6

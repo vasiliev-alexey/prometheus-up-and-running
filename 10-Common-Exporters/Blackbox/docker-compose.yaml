@@ -1,0 +1,40 @@
+version: '3.4'
+services:
+  prometheus:
+    image: prom/prometheus:v2.15.1
+    hostname: prometheus
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--web.enable-lifecycle'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - '9090:9090'
+    network_mode: host
+    logging:
+      driver: json-file
+      options:
+        max-file: '3'
+        max-size: 100m
+
+
+  black-exporter:
+    image: prom/blackbox-exporter:v0.16.0
+    hostname: black-exporter
+    volumes:
+      - ./config/blackbox.yaml:/config/blackbox.yml
+    command:
+      - '--config.file=/config/blackbox.yml'
+    ports:
+      - '9115:9115'
+    network_mode: host
+    logging:
+      driver: json-file
+      options:
+        max-file: '3'
+        max-size: 100m
+
+volumes:
+  grafana_data: {}
+  prometheus_data: {}

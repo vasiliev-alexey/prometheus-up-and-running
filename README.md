@@ -10,5 +10,7 @@
 ### 7. [Node Exporter](07-NodeExporter/README.md)
 ### 8. [Обнаружение сервисов (Service Discovery)](08-Service-Discovery/README.md)
 
+### 10. [Common Exporters](10-Common-Exporters/README.md)
+
 ### 18. [Предупреждения (Alerting)](18-Alerting/README.md)
 ### 19. [Менеджер оповещений (Alertmanager)](19-Alertmanager/README.md)

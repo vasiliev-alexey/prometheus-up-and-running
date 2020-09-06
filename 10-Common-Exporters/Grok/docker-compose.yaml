@@ -1,0 +1,15 @@
+version: "3.7"
+services: 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+    - "./config/prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+    - "9090:9090" 
+  grok:
+    image: dalongrong/grok-exporter
+    volumes: 
+    - "./example:/opt/example"
+    - "./config/grok.yaml:/grok/config.yml"
+    ports: 
+    - "9144:9144"
