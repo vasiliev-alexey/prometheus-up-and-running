@@ -14,4 +14,6 @@
 18-Alerting/prometheus
 .vscode/tasks.json
 .vscode/settings.json
+08-Service-Discovery/prometheus/*
+08-Service-Discovery/consul-data/*
 .vscode/tasks.json
